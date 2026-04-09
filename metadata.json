@@ -1,0 +1,5 @@
+{
+  "name": "AgriMind Voice",
+  "description": "A multilingual, voice-first AI assistant for smallholder farmers in Nigeria, providing instant crop diagnostics and advice.",
+  "requestFramePermissions": ["microphone"]
+}
