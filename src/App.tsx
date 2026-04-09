@@ -184,6 +184,14 @@ const TRANSLATIONS: Record<Language, Translations> = {
 
 const LANGUAGES: Language[] = ['English', 'Yoruba', 'Hausa', 'Igbo'];
 
+const CROPS = [
+  "Maize", "Cassava", "Yam", "Rice", "Cocoa", 
+  "Cowpea (Beans)", "Sorghum", "Millet", "Groundnut", 
+  "Soybeans", "Tomato", "Pepper", "Onion", "Okra", 
+  "Plantain", "Banana", "Oil Palm", "Cashew", 
+  "Ginger", "Pineapple", "Sweet Potato", "Cocoyam"
+];
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [language, setLanguage] = useState<Language>('English');
@@ -272,7 +280,7 @@ export default function App() {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.8 }}
-                  className="text-6xl font-bold text-brand-earth tracking-tight"
+                  className="text-4xl sm:text-6xl font-bold text-brand-earth tracking-tight"
                 >
                   AgriMind <span className="text-brand-olive">Voice</span>
                 </motion.h1>
@@ -321,21 +329,21 @@ export default function App() {
             className="flex-1 flex flex-col"
           >
             {/* --- Navbar --- */}
-            <nav className="bg-white/80 backdrop-blur-md border-b border-brand-olive/10 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-              <div className="flex items-center gap-3">
-                <div className="bg-brand-olive p-2.5 rounded-2xl shadow-lg shadow-brand-olive/10">
-                  <Leaf className="text-white w-6 h-6" />
+            <nav className="bg-white/80 backdrop-blur-md border-b border-brand-olive/10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-50">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="bg-brand-olive p-2 rounded-xl sm:p-2.5 sm:rounded-2xl shadow-lg shadow-brand-olive/10">
+                  <Leaf className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h1 className="text-2xl font-bold text-brand-earth tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-brand-earth tracking-tight">
                   AgriMind <span className="text-brand-olive">Voice</span>
                 </h1>
               </div>
 
               <div className="relative group">
-                <button className="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-brand-cream border border-brand-olive/10 text-sm font-bold text-brand-earth hover:bg-white hover:border-brand-olive/30 hover:shadow-md transition-all duration-300">
-                  <Globe className="w-4 h-4 text-brand-olive" />
+                <button className="flex items-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl bg-brand-cream border border-brand-olive/10 text-xs sm:text-sm font-bold text-brand-earth hover:bg-white hover:border-brand-olive/30 hover:shadow-md transition-all duration-300">
+                  <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-olive" />
                   {language}
-                  <ChevronDown className="w-4 h-4 opacity-40 group-hover:rotate-180 transition-transform duration-300" />
+                  <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-40 group-hover:rotate-180 transition-transform duration-300" />
                 </button>
                 <div className="absolute right-0 mt-3 w-48 bg-white rounded-[24px] shadow-2xl border border-brand-olive/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-50 overflow-hidden p-1.5">
                   {LANGUAGES.map((lang) => (
@@ -356,14 +364,14 @@ export default function App() {
             </nav>
 
             {/* --- Main Content --- */}
-            <main className="flex-1 max-w-7xl mx-auto w-full p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+            <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
               
               {/* --- Left Panel: Farmer Input --- */}
-              <section className="space-y-8">
-                <div className="organic-card p-8 lg:p-10 space-y-8">
-                  <div className="space-y-3">
-                    <h2 className="text-4xl font-bold tracking-tight">{t.farmerInput}</h2>
-                    <p className="text-brand-olive/60 text-base leading-relaxed">{t.inputSubtitle}</p>
+              <section className="space-y-6 sm:space-y-8">
+                <div className="organic-card p-6 sm:p-8 lg:p-10 space-y-6 sm:space-y-8">
+                  <div className="space-y-2 sm:space-y-3">
+                    <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.farmerInput}</h2>
+                    <p className="text-brand-olive/60 text-sm sm:text-base leading-relaxed">{t.inputSubtitle}</p>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -379,11 +387,9 @@ export default function App() {
                             required
                           >
                             <option value="">{t.selectCrop}</option>
-                            <option value="maize">Maize</option>
-                            <option value="cassava">Cassava</option>
-                            <option value="yam">Yam</option>
-                            <option value="rice">Rice</option>
-                            <option value="cocoa">Cocoa</option>
+                            {CROPS.map(crop => (
+                              <option key={crop} value={crop.toLowerCase()}>{crop}</option>
+                            ))}
                           </select>
                           <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-olive/30 pointer-events-none" />
                         </div>
@@ -454,13 +460,13 @@ export default function App() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2 }}
-                  className="p-8 bg-brand-olive/[0.03] rounded-[32px] border border-brand-olive/5"
+                  className="p-6 sm:p-8 bg-brand-olive/[0.03] rounded-[24px] sm:rounded-[32px] border border-brand-olive/5"
                 >
-                  <h3 className="font-bold text-brand-olive mb-3 flex items-center gap-2 text-lg">
+                  <h3 className="font-bold text-brand-olive mb-2 sm:mb-3 flex items-center gap-2 text-base sm:text-lg">
                     <ShieldCheck className="w-5 h-5" />
                     {t.whyAgriMind}
                   </h3>
-                  <p className="text-brand-olive/60 leading-relaxed">
+                  <p className="text-brand-olive/60 text-sm sm:text-base leading-relaxed">
                     {t.whyAgriMindText}
                   </p>
                 </motion.div>
@@ -498,17 +504,17 @@ export default function App() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="organic-card p-12 flex flex-col items-center justify-center text-center h-full min-h-[500px] border-dashed border-2 border-brand-olive/10 bg-transparent"
+                      className="organic-card p-8 sm:p-12 flex flex-col items-center justify-center text-center h-full min-h-[400px] sm:min-h-[500px] border-dashed border-2 border-brand-olive/10 bg-transparent"
                     >
                       <motion.div 
                         animate={{ y: [0, -10, 0] }}
                         transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                        className="bg-brand-cream p-8 rounded-[40px] mb-8"
+                        className="bg-brand-cream p-6 sm:p-8 rounded-[32px] sm:rounded-[40px] mb-6 sm:mb-8"
                       >
-                        <Sprout className="w-16 h-16 text-brand-olive/20" />
+                        <Sprout className="w-12 h-12 sm:w-16 sm:h-16 text-brand-olive/20" />
                       </motion.div>
-                      <h3 className="text-3xl font-bold text-brand-earth mb-3">{t.readyTitle}</h3>
-                      <p className="text-brand-olive/50 max-w-sm text-lg">
+                      <h3 className="text-2xl sm:text-3xl font-bold text-brand-earth mb-2 sm:mb-3">{t.readyTitle}</h3>
+                      <p className="text-brand-olive/50 max-w-sm text-base sm:text-lg">
                         {t.readySubtitle}
                       </p>
                     </motion.div>
@@ -518,9 +524,9 @@ export default function App() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="organic-card p-12 flex flex-col items-center justify-center text-center h-full min-h-[500px]"
+                      className="organic-card p-8 sm:p-12 flex flex-col items-center justify-center text-center h-full min-h-[400px] sm:min-h-[500px]"
                     >
-                      <div className="relative w-32 h-32 mb-10">
+                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-8 sm:mb-10">
                         <motion.div 
                           animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
                           transition={{ repeat: Infinity, duration: 2.5 }}
@@ -532,11 +538,11 @@ export default function App() {
                           className="absolute inset-0 border-2 border-dashed border-brand-olive/20 rounded-full"
                         />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Leaf className="w-12 h-12 text-brand-olive" />
+                          <Leaf className="w-10 h-10 sm:w-12 h-12 text-brand-olive" />
                         </div>
                       </div>
-                      <h3 className="text-3xl font-bold text-brand-earth mb-3 italic">{t.analyzingTitle}</h3>
-                      <p className="text-brand-olive/50 text-lg">{t.analyzingSubtitle}</p>
+                      <h3 className="text-2xl sm:text-3xl font-bold text-brand-earth mb-2 sm:mb-3 italic">{t.analyzingTitle}</h3>
+                      <p className="text-brand-olive/50 text-base sm:text-lg">{t.analyzingSubtitle}</p>
                     </motion.div>
                   ) : (
                     <motion.div 
@@ -544,35 +550,35 @@ export default function App() {
                       initial={{ opacity: 0, scale: 0.9, y: 30 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       transition={{ type: "spring", damping: 20, stiffness: 100 }}
-                      className="organic-card p-10 space-y-10 overflow-hidden relative"
+                      className="organic-card p-6 sm:p-10 space-y-8 sm:space-y-10 overflow-hidden relative"
                     >
                       {/* Risk Level Badge */}
-                      <div className={`absolute top-0 right-0 px-8 py-3 rounded-bl-[32px] font-black text-xs uppercase tracking-[0.2em] text-white shadow-lg ${
+                      <div className={`absolute top-0 right-0 px-4 sm:px-8 py-2 sm:py-3 rounded-bl-[24px] sm:rounded-bl-[32px] font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] text-white shadow-lg ${
                         result?.riskLevel === 'High' ? 'bg-red-500 shadow-red-200' : 
                         result?.riskLevel === 'Medium' ? 'bg-amber-500 shadow-amber-200' : 'bg-green-500 shadow-green-200'
                       }`}>
                         {result?.riskLevel === 'High' ? t.high : result?.riskLevel === 'Medium' ? t.medium : t.low} {t.riskLevel}
                       </div>
 
-                      <div className="space-y-3">
-                        <h2 className="text-4xl font-bold tracking-tight">{t.aiResponse}</h2>
-                        <p className="text-brand-olive/60 text-base">{t.responseSubtitle}</p>
+                      <div className="space-y-2 sm:space-y-3">
+                        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">{t.aiResponse}</h2>
+                        <p className="text-brand-olive/60 text-sm sm:text-base">{t.responseSubtitle}</p>
                       </div>
 
-                      <div className="space-y-8">
+                      <div className="space-y-6 sm:space-y-8">
                         {/* Likely Issue */}
                         <motion.div 
                           initial={{ x: 20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ delay: 0.2 }}
-                          className="flex gap-6"
+                          className="flex flex-col sm:flex-row gap-4 sm:gap-6"
                         >
-                          <div className="flex-shrink-0 w-16 h-16 bg-red-50 rounded-[24px] flex items-center justify-center shadow-inner">
-                            <AlertTriangle className="w-8 h-8 text-red-500" />
+                          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-red-50 rounded-[20px] sm:rounded-[24px] flex items-center justify-center shadow-inner">
+                            <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-red-500" />
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1 sm:space-y-1.5">
                             <h4 className="organic-label !mb-0">{t.likelyIssue}</h4>
-                            <p className="text-2xl font-bold text-brand-earth leading-tight">{result?.issue}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-brand-earth leading-tight">{result?.issue}</p>
                           </div>
                         </motion.div>
 
@@ -581,14 +587,14 @@ export default function App() {
                           initial={{ x: 20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ delay: 0.3 }}
-                          className="flex gap-6"
+                          className="flex flex-col sm:flex-row gap-4 sm:gap-6"
                         >
-                          <div className="flex-shrink-0 w-16 h-16 bg-green-50 rounded-[24px] flex items-center justify-center shadow-inner">
-                            <CheckCircle2 className="w-8 h-8 text-green-600" />
+                          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-green-50 rounded-[20px] sm:rounded-[24px] flex items-center justify-center shadow-inner">
+                            <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1 sm:space-y-1.5">
                             <h4 className="organic-label !mb-0">{t.immediateAction}</h4>
-                            <p className="text-brand-earth text-lg leading-relaxed">{result?.action}</p>
+                            <p className="text-brand-earth text-base sm:text-lg leading-relaxed">{result?.action}</p>
                           </div>
                         </motion.div>
 
@@ -597,14 +603,14 @@ export default function App() {
                           initial={{ x: 20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ delay: 0.4 }}
-                          className="flex gap-6"
+                          className="flex flex-col sm:flex-row gap-4 sm:gap-6"
                         >
-                          <div className="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-[24px] flex items-center justify-center shadow-inner">
-                            <ShieldCheck className="w-8 h-8 text-blue-600" />
+                          <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 bg-blue-50 rounded-[20px] sm:rounded-[24px] flex items-center justify-center shadow-inner">
+                            <ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                           </div>
-                          <div className="space-y-1.5">
+                          <div className="space-y-1 sm:space-y-1.5">
                             <h4 className="organic-label !mb-0">{t.prevention}</h4>
-                            <p className="text-brand-earth text-lg leading-relaxed">{result?.prevention}</p>
+                            <p className="text-brand-earth text-base sm:text-lg leading-relaxed">{result?.prevention}</p>
                           </div>
                         </motion.div>
                       </div>
@@ -662,14 +668,14 @@ export default function App() {
                         transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
                         className="absolute inset-0 bg-brand-olive rounded-full"
                       />
-                      <div className="relative bg-brand-olive p-8 rounded-full shadow-lg shadow-brand-olive/20">
-                        <Mic className="text-white w-12 h-12" />
+                      <div className="relative bg-brand-olive p-6 sm:p-8 rounded-full shadow-lg shadow-brand-olive/20">
+                        <Mic className="text-white w-10 h-10 sm:w-12 sm:h-12" />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <h3 className="text-2xl font-bold text-brand-earth">{t.listening}</h3>
-                      <p className="text-brand-olive/60 font-medium">
+                      <h3 className="text-xl sm:text-2xl font-bold text-brand-earth">{t.listening}</h3>
+                      <p className="text-brand-olive/60 text-sm sm:text-base font-medium">
                         {language === 'English' ? 'Speak clearly into your microphone' : 
                          language === 'Yoruba' ? 'Sọrọ ni kedere sinu gbohungbohun rẹ' :
                          language === 'Hausa' ? 'Yi magana a fili cikin makirufo' :
