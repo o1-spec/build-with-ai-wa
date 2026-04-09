@@ -10,8 +10,10 @@ import {
   ShieldCheck, 
   Globe,
   ChevronDown,
-  Leaf
+  Leaf,
+  AlertCircle
 } from 'lucide-react';
+import { analyzeCropIssue, AnalysisResult } from './services/geminiService';
 
 // --- Types ---
 type Language = 'English' | 'Yoruba' | 'Hausa' | 'Igbo';
@@ -180,41 +182,6 @@ const TRANSLATIONS: Record<Language, Translations> = {
   }
 };
 
-interface AnalysisResult {
-  issue: string;
-  action: string;
-  prevention: string;
-  riskLevel: 'Low' | 'Medium' | 'High';
-}
-
-// --- Mock Data ---
-const MOCK_RESPONSES: Record<Language, AnalysisResult> = {
-  English: {
-    issue: "Maize Stem Borer Infestation",
-    action: "Apply neem oil extract or recommended biopesticides immediately to the whorls of the plants.",
-    prevention: "Practice crop rotation with non-cereal crops and ensure early planting to avoid peak pest populations.",
-    riskLevel: "High"
-  },
-  Yoruba: {
-    issue: "Ìkọlù Kòkòrò Stem Borer lórí Àgbàdo",
-    action: "Lo òróró neem tàbí àwọn oògùn kòkòrò tí a dámọ̀ràn lẹ́sẹ̀kẹsẹ̀ sí àárín ewé ọ̀gbìn náà.",
-    prevention: "Dán àyípadà ohun-ọ̀gbìn wò pẹ̀lú àwọn ohun-ọ̀gbìn mìíràn tí kì í ṣe ọkà, kí o sì rí i pé o gbin nǹkan lójú mọ́ láti yẹra fún ìgbà tí kòkòrò pọ̀ jù.",
-    riskLevel: "High"
-  },
-  Hausa: {
-    issue: "Cutar Kwari na Stem Borer a Masara",
-    action: "Yi amfani da man neem ko magungunan kwari da aka ba da shawara nan take a tsakiyar ganyen shukar.",
-    prevention: "Gudanar da juya shuka tare da amfanin gona daban-daban, kuma tabbatar da yin shuka da wuri don guje wa lokacin da kwari ke da yawa.",
-    riskLevel: "High"
-  },
-  Igbo: {
-    issue: "Mwakpo Ahụhụ Stem Borer n'Ọka",
-    action: "Tee mmanụ neem ma ọ bụ ọgwụ ahụhụ a tụrụ aro ya ozugbo n'etiti akwụkwọ ihe ọkụkụ ahụ.",
-    prevention: "Na-agbanwe ihe ọkụkụ ị na-akụ n'ugbo gị, hụkwa na ị kụrụ ihe n'oge ka ị zere oge ahụhụ na-adị n'uju.",
-    riskLevel: "High"
-  }
-};
-
 const LANGUAGES: Language[] = ['English', 'Yoruba', 'Hausa', 'Igbo'];
 
 export default function App() {
@@ -227,6 +194,7 @@ export default function App() {
   const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const t = TRANSLATIONS[language];
 
@@ -237,16 +205,20 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsAnalyzing(true);
     setResult(null);
+    setError(null);
     
-    // Simulate AI processing
-    setTimeout(() => {
+    try {
+      const analysis = await analyzeCropIssue(cropType, location, message, language);
+      setResult(analysis);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+    } finally {
       setIsAnalyzing(false);
-      setResult(MOCK_RESPONSES[language]);
-    }, 2000);
+    }
   };
 
   const toggleRecording = () => {
@@ -497,7 +469,30 @@ export default function App() {
               {/* --- Right Panel: AI Response --- */}
               <section className="space-y-8">
                 <AnimatePresence mode="wait">
-                  {!result && !isAnalyzing ? (
+                  {error && (
+                    <motion.div
+                      key="error"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="organic-card p-8 border-red-200 bg-red-50/30 flex flex-col items-center text-center gap-4"
+                    >
+                      <div className="bg-red-100 p-4 rounded-full">
+                        <AlertCircle className="w-8 h-8 text-red-600" />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-bold text-red-900">Analysis Failed</h3>
+                        <p className="text-red-700/80">{error}</p>
+                      </div>
+                      <button 
+                        onClick={() => setError(null)}
+                        className="text-sm font-bold text-red-600 hover:text-red-800 underline"
+                      >
+                        Dismiss
+                      </button>
+                    </motion.div>
+                  )}
+
+                  {!result && !isAnalyzing && !error ? (
                     <motion.div 
                       key="empty"
                       initial={{ opacity: 0, y: 20 }}
