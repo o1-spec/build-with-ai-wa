@@ -26,6 +26,7 @@ interface Translations {
   locationPlaceholder: string;
   messageLabel: string;
   messagePlaceholder: string;
+  sampleVoiceMessage: string;
   voiceInput: string;
   listening: string;
   submit: string;
@@ -59,6 +60,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     locationPlaceholder: "e.g. Ibadan, Oyo",
     messageLabel: "Your Message",
     messagePlaceholder: "Describe the issue with your crop...",
+    sampleVoiceMessage: "I noticed some small holes in the leaves of my maize plants and some brown dust near the stems.",
     voiceInput: "Use Voice Input",
     listening: "Listening...",
     submit: "Submit Report",
@@ -90,6 +92,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     locationPlaceholder: "apẹẹrẹ: Ibadan, Oyo",
     messageLabel: "Iṣẹ Rẹ",
     messagePlaceholder: "Ṣapejuwe iṣoro ti o ni pẹlu ohun-ọgbin rẹ...",
+    sampleVoiceMessage: "Mo ṣe akiyesi awọn ihò kekere ninu awọn ewé ọgbin agbado mi ati diẹ ninu eruku brown nitosi awọn igi.",
     voiceInput: "Lo Ohun Rẹ",
     listening: "A n gbọ...",
     submit: "Fi Iroyin Ranṣẹ",
@@ -121,6 +124,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     locationPlaceholder: "misali: Kano, Kaduna",
     messageLabel: "Saƙon ku",
     messagePlaceholder: "Bayyana matsalar shukar ku...",
+    sampleVoiceMessage: "Na lura da wasu ƙananan ramuka a cikin ganyen masarata da wasu ƙurar launin ruwan kasa kusa da kututturen.",
     voiceInput: "Yi amfani da Murya",
     listening: "Ina sauraro...",
     submit: "Aika Rahoto",
@@ -152,6 +156,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     locationPlaceholder: "dịka ọmụmaatụ: Enugu, Owerri",
     messageLabel: "Ozi gị",
     messagePlaceholder: "Kọwaa nsogbu ị nwere n'ihe ọkụkụ gị...",
+    sampleVoiceMessage: "Achọpụtara m ụfọdụ obere oghere na akwụkwọ ọka m na ụfọdụ uzuzu aja aja n'akụkụ ogporo ya.",
     voiceInput: "Jiri olu gị",
     listening: "Ana m ege ntị...",
     submit: "Zipụ akụkọ",
@@ -219,6 +224,7 @@ export default function App() {
   const [location, setLocation] = useState('');
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
@@ -244,14 +250,17 @@ export default function App() {
   };
 
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      // Mock voice-to-text
-      setTimeout(() => {
-        setMessage("I noticed some small holes in the leaves of my maize plants and some brown dust near the stems.");
-        setIsRecording(false);
-      }, 3000);
-    }
+    if (isRecording) return;
+    
+    setIsRecording(true);
+    setShowVoiceModal(true);
+    
+    // Mock voice-to-text
+    setTimeout(() => {
+      setMessage(t.sampleVoiceMessage);
+      setIsRecording(false);
+      setShowVoiceModal(false);
+    }, 2500);
   };
 
   return (
@@ -628,6 +637,73 @@ export default function App() {
                 &copy; 2026 AgriMind Voice. Empowering smallholder farmers across Nigeria.
               </p>
             </footer>
+
+            {/* --- Voice Input Modal --- */}
+            <AnimatePresence>
+              {showVoiceModal && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-[200] flex items-center justify-center p-6"
+                >
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-brand-earth/40 backdrop-blur-sm"
+                    onClick={() => setShowVoiceModal(false)}
+                  />
+                  
+                  <motion.div
+                    initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                    animate={{ scale: 1, y: 0, opacity: 1 }}
+                    exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                    className="bg-white rounded-[40px] p-12 flex flex-col items-center gap-8 shadow-2xl relative z-10 max-w-sm w-full text-center"
+                  >
+                    <div className="relative">
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.2, 0.5] }}
+                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                        className="absolute inset-0 bg-brand-olive rounded-full"
+                      />
+                      <div className="relative bg-brand-olive p-8 rounded-full shadow-lg shadow-brand-olive/20">
+                        <Mic className="text-white w-12 h-12" />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h3 className="text-2xl font-bold text-brand-earth">{t.listening}</h3>
+                      <p className="text-brand-olive/60 font-medium">
+                        {language === 'English' ? 'Speak clearly into your microphone' : 
+                         language === 'Yoruba' ? 'Sọrọ ni kedere sinu gbohungbohun rẹ' :
+                         language === 'Hausa' ? 'Yi magana a fili cikin makirufo' :
+                         'Kwuo okwu nke ọma n\'ime igwe okwu gị'}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {[0, 1, 2, 3].map((i) => (
+                        <motion.div
+                          key={i}
+                          animate={{ 
+                            height: [12, 32, 12],
+                            opacity: [0.3, 1, 0.3]
+                          }}
+                          transition={{ 
+                            repeat: Infinity, 
+                            duration: 0.6, 
+                            delay: i * 0.1,
+                            ease: "easeInOut"
+                          }}
+                          className="w-1.5 bg-brand-olive rounded-full"
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
